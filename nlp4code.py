@@ -40,8 +40,9 @@ def process_task(task, model_id, lang, dir, epoch):
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         torch_dtype=torch.float16,
-        # device_map="auto",
-    ).to(device)
+        device_map="auto",
+    )
+        # .to(device)
     model.generation_config.pad_token_id=tokenizer.pad_token_id
     # make_parallel(model)
     logging.info("Finish loading tokenizer and model")
