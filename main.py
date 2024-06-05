@@ -265,8 +265,8 @@ if __name__ == "__main__":
             output_directory = main_directory + f"/{question_id}/{epoch}/"
             os.makedirs(output_directory, exist_ok=True)
             code = nlp4code.process_task(task, model_id=model_id, lang=args.lang, dir=output_directory, epoch=epoch)
-            exit(1)
             _parse_instruction(code, None)
+            exit(1)
             # formatted_responce_leetcode = submit_to_leetcode(code=output, question_id=question_id, name_problem=name_problem, api_instance=api_instance, epoch=epoch, lang=args.lang, dir=output_directory)
             # if formatted_responce_leetcode == None:
             #     break

@@ -30,7 +30,6 @@ def read_file_to_string(file_path):
 
 def _parse_instruction(code, instruction_tokens):
     logging.info("Start parse instruction")
-    logging.info(code)
     # start = '```'
     # end = '```'
     # index_code = code.rfind(end)

@@ -9,7 +9,7 @@ def get_input_from_task(task: str, lang: str, dir, epoch):
     logging.info(f"Epoch: {epoch}, Lang:{lang}, Dir:{dir}")
     chat = [
         {"role": "system", "content": f"You are a helpful and honest code assistant expert in {lang.capitalize()}. Please, provide all answers to programming questions in {lang.capitalize()}."},
-        {"role": "user", "content": "Write method in class Solution. Program should be compiled "+task},
+        {"role": "user", "content": "Program should be compiled. Write method in class Solution. "+task},
     ]
     if int(epoch) > 0:
         for i in range(int(epoch)):
@@ -39,7 +39,7 @@ def process_task(task, model_id, lang, dir, epoch):
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         torch_dtype=torch.float16,
-        device_map="auto",
+        # device_map="auto",
     )
     model.generation_config.pad_token_id=tokenizer.pad_token_id
     # make_parallel(model)
