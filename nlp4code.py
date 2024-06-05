@@ -29,7 +29,6 @@ def get_input_from_task(task: str, lang: str, dir, epoch):
                 logging.error(
                     f"Not found svace output to from directory:{direct}")
             chat.append({"role": "user", "content": "correct program above with this feedback: " + read_file_to_string(file_path_svace_output) + ".\n Write the resulting code."})
-
     return chat
 
 
@@ -42,6 +41,7 @@ def process_task(task, model_id, lang, dir, epoch):
         torch_dtype=torch.float16,
         device_map="auto",
     )
+    model.generation_config.pad_token_id=tokenizer.pad_token_id
     # make_parallel(model)
     logging.info("Finish loading tokenizer and model")
 
@@ -51,6 +51,7 @@ def process_task(task, model_id, lang, dir, epoch):
         logging.info(f"Path question directory: {question_dir}")
 
     chat = get_input_from_task(task, lang=lang, dir=question_dir, epoch=epoch)
+    logging.info(chat)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     inputs = tokenizer.apply_chat_template(chat, return_tensors="pt").to(device)
 

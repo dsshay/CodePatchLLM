@@ -1,5 +1,6 @@
 # import torch
 # import torch.nn as nn
+import logging
 import os
 import re
 import warnings
@@ -28,6 +29,26 @@ def read_file_to_string(file_path):
 
 
 def _parse_instruction(code, instruction_tokens):
+    logging.info("Start parse instruction")
+    logging.info(code)
+    # start = '```'
+    # end = '```'
+    # index_code = code.rfind(end)
+    # if index_code != -1:
+    #     output = code[1:index_code]
+    #     output = output[output.rfind(start) + len(start) + 1:]
+    # else:
+    #     logging.error(
+    #         "It is not possible to correctly select the code from the model's response. Perhaps there is not enough response length?")
+    #     break
+    # # logging.info(f"Selected output: {output}")
+    # # if args.lang == "java":
+    # #     output = "class Solution{\n" + output + "}"
+    # output_file_path = os.path.join(output_directory, f"Solution.{formats}")
+    # with open(output_file_path, "w") as f:
+    #     f.write(output)
+    # logging.info(f"Finished selecting output, saved in {output_file_path}")
+
     """Return code block after assistant_token/end_token"""
     _, end_token, assistant_token = instruction_tokens
     if not assistant_token and end_token:

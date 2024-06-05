@@ -21,7 +21,7 @@ import leetcode.auth
 from huggingface_hub import hf_hub_download
 from sklearn.model_selection import train_test_split
 from prepare_data import load_data, preprocess_df
-from utils import t_or_f
+from utils import t_or_f, _parse_instruction
 import nlp4code
 
 def svace_analyze(file, lang, epoch, dir):
@@ -264,28 +264,12 @@ if __name__ == "__main__":
         for epoch in range(args.num_epochs):
             output_directory = main_directory + f"/{question_id}/{epoch}/"
             os.makedirs(output_directory, exist_ok=True)
-            output = nlp4code.process_task(task, model_id=model_id, lang=args.lang, dir=output_directory, epoch=epoch)
+            code = nlp4code.process_task(task, model_id=model_id, lang=args.lang, dir=output_directory, epoch=epoch)
             exit(1)
-            logging.info("Start selecting output")
-            start = '```'
-            end = '```'
-            index_code = output.rfind(end)
-            if index_code != -1:
-                output = output[1:index_code]
-                output = output[output.rfind(start) + len(start) + 1:]
-            else:
-                logging.error("It is not possible to correctly select the code from the model's response. Perhaps there is not enough response length?")
-                break
-            # logging.info(f"Selected output: {output}")
-            # if args.lang == "java":
-            #     output = "class Solution{\n" + output + "}"
-            output_file_path = os.path.join(output_directory, f"Solution.{formats}")
-            with open(output_file_path, "w") as f:
-                f.write(output)
-            logging.info(f"Finished selecting output, saved in {output_file_path}")
-            formatted_responce_leetcode = submit_to_leetcode(code=output, question_id=question_id, name_problem=name_problem, api_instance=api_instance, epoch=epoch, lang=args.lang, dir=output_directory)
-            if formatted_responce_leetcode == None:
-                break
+            _parse_instruction(code, None)
+            # formatted_responce_leetcode = submit_to_leetcode(code=output, question_id=question_id, name_problem=name_problem, api_instance=api_instance, epoch=epoch, lang=args.lang, dir=output_directory)
+            # if formatted_responce_leetcode == None:
+            #     break
 
             # reward = leetcode_reward_function(formatted_responce_leetcode)
             # leetcode_feedback = formatted_responce_leetcode['full_runtime_error'] == True
