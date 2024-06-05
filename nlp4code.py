@@ -36,11 +36,12 @@ def process_task(task, model_id, lang, dir, epoch):
     logging.info("Start loading tokenizer and model")
     tokenizer = AutoTokenizer.from_pretrained(model_id, padding_side="left")
     tokenizer.pad_token = tokenizer.eos_token
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         torch_dtype=torch.float16,
         # device_map="auto",
-    )
+    ).to(device)
     model.generation_config.pad_token_id=tokenizer.pad_token_id
     # make_parallel(model)
     logging.info("Finish loading tokenizer and model")
@@ -52,7 +53,6 @@ def process_task(task, model_id, lang, dir, epoch):
 
     chat = get_input_from_task(task, lang=lang, dir=question_dir, epoch=epoch)
     logging.info(chat)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     inputs = tokenizer.apply_chat_template(chat, return_tensors="pt").to(device)
 
     logging.info("Start generate code")
