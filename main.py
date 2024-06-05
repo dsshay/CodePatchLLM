@@ -217,7 +217,7 @@ if __name__ == "__main__":
     parser.add_argument("--wandb_flag", default=False, type=str)
     parser.add_argument("--lang", default="java", type=str) # kotlin, python, java
     parser.add_argument("--num_epochs", default=5, type=int)
-
+    parser.add_argument("--limit", default=None, type=int, help="Number of samples to solve and evaluate from the benchmark")
 
     args = parser.parse_args()
     args.wandb_flag = t_or_f(args.wandb_flag)
@@ -252,9 +252,12 @@ if __name__ == "__main__":
     main_directory = f"./llm_predicts/{formats}"
     os.makedirs(f"./llm_predicts/{formats}", exist_ok=True)
 
-    for _, row in df.iterrows():
-        question_id = row['task_id']
-        task = row['content']
+    n_tasks = min(args.limit, len(df)) if args.limit else len(df)
+
+    for i in range(len(df)):
+        question_id = df[i]['task_id']
+        task = df[i]['content']
+        logging.info(f"Question id = {question_id}")
 
         output_directory = main_directory + f"/{question_id}/"
         os.makedirs(output_directory, exist_ok=True)
