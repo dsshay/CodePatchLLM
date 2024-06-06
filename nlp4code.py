@@ -31,21 +31,24 @@ def get_input_from_task(task: str, lang: str, dir, epoch):
             chat.append({"role": "user", "content": "correct program above with this feedback: " + read_file_to_string(file_path_svace_output) + ".\n Write the resulting code."})
     return chat
 
-
-def process_task(task, model_id, lang, dir, epoch):
-    logging.info("Start loading tokenizer and model")
+def init_model(model_id):
     tokenizer = AutoTokenizer.from_pretrained(model_id, truncation_side="left", padding_side="right")
     tokenizer.pad_token = tokenizer.eos_token
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         torch_dtype=torch.float16,
         device_map="auto",
     )
-        # .to(device)
-    model.generation_config.pad_token_id=tokenizer.pad_token_id
+    # .to(device)
+    model.generation_config.pad_token_id = tokenizer.pad_token_id
     # make_parallel(model)
     logging.info("Finish loading tokenizer and model")
+    return model, tokenizer
+
+
+def process_task(task, model, tokenizer, lang, dir, epoch):
+    logging.info("Start loading tokenizer and model")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     question_dir = dir
     if epoch > 0:

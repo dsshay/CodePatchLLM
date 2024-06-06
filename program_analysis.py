@@ -57,31 +57,24 @@ def svace_analyze(file, lang, epoch, dir):
         logging.info(test.stdout)
         directory = dir + ".svace-dir/analyze-res"
         files = os.listdir(directory)
-        svres_files = [file for file in files if file.endswith(".svres")]
+        # svres_files = [file for file in files if file.endswith(".svres")]
         txt = [file for file in files if file.endswith(f"{epoch}.txt")]
+        warnings = ""
         if len(txt) != 0:
             svace_an = read_file_to_string(directory + f"/{txt[0]}")
-            lines = svace_an.strip().split("\n")
-            try:
-                total_warnings = int(lines[0].split(":")[1].strip())
-                logging.info(f"Total warning={total_warnings} in epoch:{epoch}")
-                return 0
-            except IndexError:
-                tree = ET.parse(directory + f"/{svres_files[0]}")
-                root = tree.getroot()
-                result = ""
-                for warn_info in root.findall(".//WarnInfo"):
-                    line = warn_info.attrib.get("line")
-                    warning_msg = warn_info.attrib.get("msg")
-                    if warning_msg:
-                        result += f"In Line {line}: {warning_msg}\n"
-            # analyzed_lines = int(lines[2].split(":")[1].strip())
-            # warning_density = float(lines[3].split(":")[1].strip())
-            # logging.info(
-            #     f"Total warning: {total_warnings}, Analyzed lines: {analyzed_lines}, Warning Density: {warning_density}")
-
+            mask = 'Total warnings: '
+            svace_an = svace_an[svace_an.find(mask) + len(mask):]
+            total_warnings = int(svace_an.split("\n")[0].strip())
+            t = svace_an.find("* ")
+            svace_an = svace_an[t + 2:]
+            while t != -1:
+                t = svace_an.find("* ")
+                warnings += svace_an[svace_an.find(":") + 2:t] + "\n"
+                svace_an = svace_an[t + 2:]
+            logging.info(f"Total warnings: {total_warnings}, Warnings: {warnings}")
+            result += warnings
         else:
-            logging.error("Not Found analyze result file.txt")
+            logging.error(f"Not Found analyze result {directory}/{epoch}.txt")
 
     output_file_path = os.path.join(dir, f"svace_message.txt")
     with open(output_file_path, "w") as f:

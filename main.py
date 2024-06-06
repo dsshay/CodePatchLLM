@@ -63,6 +63,7 @@ if __name__ == "__main__":
     os.makedirs(f"./llm_predicts/{formats}", exist_ok=True)
 
     n_tasks = min(args.limit, len(df)) if args.limit else len(df)
+    model, tokenizer = nlp4code.init_model(model_id)
 
     for i in range(args.start, args.start + n_tasks):
         question_id = df[i]['task_id']
@@ -74,7 +75,7 @@ if __name__ == "__main__":
         for epoch in range(args.num_epochs):
             output_directory = main_directory + f"/{question_id}/{epoch}/"
             os.makedirs(output_directory, exist_ok=True)
-            code = nlp4code.process_task(task, model_id=model_id, lang=args.lang, dir=output_directory, epoch=epoch)
+            code = nlp4code.process_task(task=task, model=model, tokenizer=tokenizer, lang=args.lang, dir=output_directory, epoch=epoch)
             output = _parse_instruction(code, args.lang)
             output_file_path = os.path.join(output_directory, f"Solution.{formats}")
             with open(output_file_path, "w") as f:
