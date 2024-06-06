@@ -54,7 +54,7 @@ def svace_analyze(file, lang, epoch, dir):
             logging.error(f"svace analyze")
             logging.error(f"Error message: {e.stderr}")
 
-        logging.info(f"What happend? {test.stdout}")
+        logging.info(test.stdout)
         directory = dir + ".svace-dir/analyze-res"
         files = os.listdir(directory)
         svres_files = [file for file in files if file.endswith(".svres")]

@@ -27,6 +27,7 @@ if __name__ == "__main__":
     parser.add_argument("--lang", default="java", type=str) # kotlin, python, java
     parser.add_argument("--num_epochs", default=5, type=int)
     parser.add_argument("--limit", default=None, type=int, help="Number of samples to solve and evaluate from the benchmark")
+    parser.add_argument("--start", default=0, type=int, help="Start Number of dataset")
 
     args = parser.parse_args()
     args.wandb_flag = t_or_f(args.wandb_flag)
@@ -63,7 +64,7 @@ if __name__ == "__main__":
 
     n_tasks = min(args.limit, len(df)) if args.limit else len(df)
 
-    for i in range(len(df)):
+    for i in range(args.start, args.start + n_tasks):
         question_id = df[i]['task_id']
         task = df[i]['content']
         logging.info(f"Question id = {question_id}")

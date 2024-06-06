@@ -34,7 +34,7 @@ def get_input_from_task(task: str, lang: str, dir, epoch):
 
 def process_task(task, model_id, lang, dir, epoch):
     logging.info("Start loading tokenizer and model")
-    tokenizer = AutoTokenizer.from_pretrained(model_id, padding_side="left")
+    tokenizer = AutoTokenizer.from_pretrained(model_id, truncation_side="left", padding_side="right")
     tokenizer.pad_token = tokenizer.eos_token
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = AutoModelForCausalLM.from_pretrained(
